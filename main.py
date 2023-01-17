@@ -55,7 +55,8 @@ class Instagram():
 
         #time.sleep(10)
 
-Instagram().subs_for_user_subs('therock')
+nick = input('Enter nick: ')
+Instagram().subs_for_user_subs(nick)
 
 #btn
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[50]/div[3]/button
