@@ -1,5 +1,5 @@
 import time
-import cfg
+import cfg, db
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -10,7 +10,7 @@ import pickle
 class Instagram():
     def __init__(self):
         options = webdriver.FirefoxOptions()
-        #options.headless = True
+        options.headless = True
         self.browser = webdriver.Firefox(options=options)
         self.browser.get('https://www.instagram.com/')
         #self.browser.get('https://www.youtube.com/')
@@ -55,6 +55,7 @@ class Instagram():
                 print('You now subscribe')
             except:
                 nick_user = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[2]/div/div/div/span/a/span/div').text
+                db.bd_sync().write_users(cfg.username, nick_user)
                 print(f'[+] You subscribe {b} to {nick_user}')
             i += 1
             b += 1
