@@ -4,12 +4,13 @@ import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+import pickle
 #from selenium.webdriver.chrome.options import Options
 
 class Instagram():
     def __init__(self):
         options = webdriver.FirefoxOptions()
-        options.headless = True
+        #options.headless = True
         self.browser = webdriver.Firefox(options=options)
         self.browser.get('https://www.instagram.com/')
         #self.browser.get('https://www.youtube.com/')
@@ -20,14 +21,24 @@ class Instagram():
         except:
             print("[+]Cokies dont need")
 
-        #Auth
-        time.sleep(5)
-        login = self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div[1]/div[1]/div/label/input')
-        login.send_keys(cfg.username)
-        password = self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div[1]/div[2]/div/label/input')
-        password.send_keys(cfg.password)
-        self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div/div[3]/button').click()
-        time.sleep(5)
+        try:
+            for cookie in pickle.load(open(f"{cfg.username}.ck", "rb")):
+                self.browser.add_cookie(cookie)
+
+            time.sleep(5)
+            self.browser.refresh()
+            time.sleep(5)
+        except:
+            #Auth
+            time.sleep(5)
+            login = self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div[1]/div[1]/div/label/input')
+            login.send_keys(cfg.username)
+            password = self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div[1]/div[2]/div/label/input')
+            password.send_keys(cfg.password)
+            self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div/div[3]/button').click()
+            time.sleep(5)
+
+            pickle.dump(self.browser.get_cookies(), open(f"{cfg.username}.ck", "wb"))
 
     def subs_for_user_subs(self, nick_for_subs):
         self.browser.get(f'https://www.instagram.com/{nick_for_subs}/followers/')
@@ -51,8 +62,6 @@ class Instagram():
                 self.browser.refresh()
                 i = 1
             time.sleep(60)
-
-
 
         #time.sleep(10)
 
