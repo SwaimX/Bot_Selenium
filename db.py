@@ -1,5 +1,4 @@
-import sqlite3
-
+import sqlite3, datetime
 class bd_sync():
     def __init__(self):
         self.db = sqlite3.connect('swaim.db')
@@ -7,10 +6,10 @@ class bd_sync():
 
     def write_users(self, my_nick, nick_subs):
         try:
-            self.c.execute(f"INSERT INTO {my_nick} VALUES ('{nick_subs}');")
+            self.c.execute(f"INSERT INTO {my_nick}_inf VALUES ('{nick_subs}', '{datetime.datetime.now().date()}');")
         except sqlite3.OperationalError:
-            self.c.execute(f'''CREATE TABLE {my_nick} (nick_you_sub text);''')
-            self.c.execute(f"INSERT INTO {my_nick} VALUES ('{nick_subs}');")
+            self.c.execute(f'''CREATE TABLE {my_nick}_inf (nick_you_sub text, data text);''')
+            self.c.execute(f"INSERT INTO {my_nick}_inf VALUES ('{nick_subs}', '{datetime.datetime.now().date()}');")
         self.db.commit()
         self.db.close()
 

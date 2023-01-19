@@ -1,4 +1,7 @@
 import time
+
+import selenium.common.exceptions
+
 import cfg, db
 import unittest
 from selenium import webdriver
@@ -10,7 +13,7 @@ import pickle
 class Instagram():
     def __init__(self):
         options = webdriver.FirefoxOptions()
-        options.headless = True
+        #options.headless = True
         self.browser = webdriver.Firefox(options=options)
         self.browser.get('https://www.instagram.com/')
         #self.browser.get('https://www.youtube.com/')
@@ -21,6 +24,7 @@ class Instagram():
         except:
             print("[+]Cokies dont need")
 
+        # Auth
         try:
             for cookie in pickle.load(open(f"{cfg.username}.ck", "rb")):
                 self.browser.add_cookie(cookie)
@@ -28,8 +32,8 @@ class Instagram():
             time.sleep(5)
             self.browser.refresh()
             time.sleep(5)
+
         except:
-            #Auth
             time.sleep(5)
             login = self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div[1]/div[1]/div/label/input')
             login.send_keys(cfg.username)
@@ -53,8 +57,8 @@ class Instagram():
                 self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]').click()
                 b -= 1
                 print('You now subscribe')
-            except:
-                nick_user = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[2]/div/div/div/span/a/span/div').text
+            except selenium.common.exceptions.NoSuchElementException:
+                nick_user = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[2]/div/div/div/div/a/span/div').text
                 db.bd_sync().write_users(cfg.username, nick_user)
                 print(f'[+] You subscribe {b} to {nick_user}')
             i += 1
@@ -80,5 +84,6 @@ Instagram().subs_for_user_subs(nick)
 #/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[2]/div/section/div/div/div/div/div[2]/div[2]/div/div[1]/div/div/div[20]/div[2]/div/div/div[1]/div/div/div/div/div/div
 
 #get_nick
+#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div/div/div/a/span/div
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div/div/span/a/span/div
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div[2]/div/div/div/span/a/span/div
