@@ -1,21 +1,16 @@
 import time, threading
 import selenium.common.exceptions
 import cfg, db
-import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.action_chains import ActionChains
 import pickle
-#from selenium.webdriver.chrome.options import Options
 
 class Instagram():
     def __init__(self):
-        print("lol")
         options = webdriver.FirefoxOptions()
-        options.headless = True
+        #options.headless = True
         self.browser = webdriver.Firefox(options=options)
         self.browser.get('https://www.instagram.com/')
-        #self.browser.get('https://www.youtube.com/')
         time.sleep(5)
         try:
             self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/button[1]').click()
@@ -79,15 +74,26 @@ class Instagram():
             i += 1
             time.sleep(60)
 
-    def unsubs_check_time(self):
-        for i in range(2):
+    def unsubs_check_and_time(self):
+        while True:
             uns = db.bd_sync().check_data(cfg.username)
-            print(uns)
+            time.sleep(2)
+            if uns != None:
+                print(uns)
+                self.browser.get(f'https://www.instagram.com/{uns}/')
+                time.sleep(5)
+                self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/header/section/div[1]/div[1]/div/div[1]/button').click()
+                time.sleep(5)
+                self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div/div[7]').click()
+                db.bd_sync().remove_nickname(cfg.username, uns)
+                time.sleep(60)
+            else:
+                time.sleep(60*60)
 
 
 
-nick = input('Enter nick: ')
-threading.Thread(target=Instagram().unsubs_all()).start()
+#nick = input('Enter nick: ')
+threading.Thread(target=Instagram().unsubs_check_and_time()).start()
 #threading.Thread(target=Instagram().subs_for_user_subs(nick))
 
 
@@ -109,3 +115,6 @@ threading.Thread(target=Instagram().unsubs_all()).start()
 #btn_unsub
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div/div[1]/div[3]/button
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div/div[2]/div[3]/button
+
+#/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/div[1]/div[2]/section/main/div/header/section/div[1]/div[1]/div/div[1]/button
+#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div/div[7]

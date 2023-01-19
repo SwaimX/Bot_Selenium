@@ -22,13 +22,20 @@ class bd_sync():
         select_all_rows = f"SELECT * FROM {my_nick}_inf"
         self.c.execute(select_all_rows)
         rows = self.c.fetchall()
-
         for row in rows:
             day = row[1]
             day = day.split('-')
             if int(day[2]) > datetime.datetime.now().day + 2:
+                self.db.close()
                 return row[0]
+        self.db.close()
         return None
+
+
+    def remove_nickname(self, my_nick, nick_remove):
+        self.c.execute(f"DELETE FROM {my_nick}_inf WHERE nick_you_sub = '{nick_remove}'")
+        self.db.commit()
+        self.db.close()
 
 
 
