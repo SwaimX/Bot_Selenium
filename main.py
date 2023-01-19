@@ -1,7 +1,5 @@
-import time
-
+import time, threading
 import selenium.common.exceptions
-
 import cfg, db
 import unittest
 from selenium import webdriver
@@ -12,8 +10,9 @@ import pickle
 
 class Instagram():
     def __init__(self):
+        print("lol")
         options = webdriver.FirefoxOptions()
-        #options.headless = True
+        options.headless = True
         self.browser = webdriver.Firefox(options=options)
         self.browser.get('https://www.instagram.com/')
         #self.browser.get('https://www.youtube.com/')
@@ -80,12 +79,16 @@ class Instagram():
             i += 1
             time.sleep(60)
 
+    def unsubs_check_time(self):
+        for i in range(2):
+            uns = db.bd_sync().check_data(cfg.username)
+            print(uns)
 
 
 
 nick = input('Enter nick: ')
-Instagram().unsubs_all()
-Instagram().subs_for_user_subs(nick)
+threading.Thread(target=Instagram().unsubs_all()).start()
+#threading.Thread(target=Instagram().subs_for_user_subs(nick))
 
 
 #btn
