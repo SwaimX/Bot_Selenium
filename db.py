@@ -49,7 +49,7 @@ class bd_sync():
                         if nick_in_data == nick:
                             self.db.close()
                             return
-                    self.c.execute(f"INSERT INTO subs_inf VALUES ('{nick}', false);")
+                    self.c.execute(f"INSERT INTO subs_inf VALUES ('{nick}', true);")
                     self.db.commit()
                     self.db.close()
                     return
@@ -58,6 +58,11 @@ class bd_sync():
                     self.c.execute('CREATE TABLE subs_inf (nick text, hose BOOLEAN);')
                     self.db.commit()
                     continue
+
+        def not_hose(self, nick):
+            self.c.execute(f"UPDATE subs_inf SET hose = false WHERE nick = '{nick}'")
+            self.db.commit()
+            self.db.close()
 
 
     except:

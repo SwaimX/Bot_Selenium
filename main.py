@@ -95,35 +95,43 @@ class Instagram():
             else:
                 time.sleep(60*60)
 
+    def check_no_hose(self):
+        self.browser.get(f'https://www.instagram.com/{cfg.username}/followers/')
+        time.sleep(15)
+        gor = 0
+        i = 1
+        while True:
+
+            try:
+                nick_no_hose = self.browser.find_element(By.XPATH, pub_cfg.hose_no(i)).text
+                time.sleep(1)
+                self.browser.find_element(By.XPATH, pub_cfg.hose_for_scroll(i)).click()
+                time.sleep(1)
+                self.browser.find_element(By.XPATH, pub_cfg.hose_for_cancel).click()
+                db.bd_sync().add_nick_name_in_all(nick_no_hose)
+                db.bd_sync().not_hose(nick_no_hose)
+                i += 1
+                gor = 0
+
+            except:
+                gor += 1
+                if gor == 15:
+                    print('[+] Finally')
+                    return
+                else:
+                    time.sleep(15)
+                    continue
 
 
 
 
-nick = input('Enter nick: ')
-Instagram().subs_on_user_subs(nick)
-#Instagram().unsubs_check_and_time()
-#threading.Thread(target=Instagram().unsubs_check_and_time()).start()
-#threading.Thread(target=Instagram().subs_for_user_subs(nick))
 
 
-#btn
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[50]/div[3]/button
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div[2]/div[3]/button
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]
 
-#msg
-#/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[2]/div/section/div/div/div/div/div[2]/div[2]/div/div[1]/div/div/div[21]/div[2]/div/div/div/div/div/div/div/div/div
-#/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[2]/div/section/div/div/div/div/div[2]/div[2]/div/div[1]/div/div/div[17]/div[2]/div/div/div/div/div/div/div/div/div
-#/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/div[1]/div/div[2]/div/section/div/div/div/div/div[2]/div[2]/div/div[1]/div/div/div[20]/div[2]/div/div/div[1]/div/div/div/div/div/div
+Instagram().check_no_hose()
 
-#get_nick
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div/div/div/a/span/div
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div/div/span/a/span/div
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div[2]/div/div/div/span/a/span/div
-
-#btn_unsub
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div/div[1]/div[3]/button
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div/div[2]/div[3]/button
-
-#/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/div[1]/div[2]/section/main/div/header/section/div[1]/div[1]/div/div[1]/button
-#/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div/div[7]
+# nick = input('Enter nick: ')
+# # Instagram().subs_on_user_subs(nick)
+# #Instagram().unsubs_check_and_time()
+# #threading.Thread(target=Instagram().unsubs_check_and_time()).start()
+# threading.Thread(target=Instagram().subs_on_user_subs(nick))
