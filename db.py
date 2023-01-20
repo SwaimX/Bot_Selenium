@@ -1,41 +1,44 @@
 import sqlite3, datetime
 class bd_sync():
-    def __init__(self):
+    try:
+        def __init__(self):
 
-        self.db = sqlite3.connect('swaim.db')
-        self.c = self.db.cursor()
+            self.db = sqlite3.connect('swaim.db')
+            self.c = self.db.cursor()
 
-    def write_users(self, my_nick, nick_subs):
+        def write_users(self, my_nick, nick_subs):
 
-        try:
-            self.c.execute(f"INSERT INTO {my_nick}_inf VALUES ('{nick_subs}', '{datetime.datetime.now().date()}');")
+            try:
+                self.c.execute(f"INSERT INTO {my_nick}_inf VALUES ('{nick_subs}', '{datetime.datetime.now().date()}');")
 
-        except sqlite3.OperationalError:
-            self.c.execute(f'''CREATE TABLE {my_nick}_inf (nick_you_sub text, data text);''')
-            self.c.execute(f"INSERT INTO {my_nick}_inf VALUES ('{nick_subs}', '{datetime.datetime.now().date()}');")
+            except sqlite3.OperationalError:
+                self.c.execute(f'''CREATE TABLE {my_nick}_inf (nick_you_sub text, data text);''')
+                self.c.execute(f"INSERT INTO {my_nick}_inf VALUES ('{nick_subs}', '{datetime.datetime.now().date()}');")
 
-        self.db.commit()
-        self.db.close()
+            self.db.commit()
+            self.db.close()
 
-    def check_data(self, my_nick):
+        def check_data(self, my_nick):
 
-        select_all_rows = f"SELECT * FROM {my_nick}_inf"
-        self.c.execute(select_all_rows)
-        rows = self.c.fetchall()
-        for row in rows:
-            day = row[1]
-            day = day.split('-')
-            if int(day[2]) > datetime.datetime.now().day + 2:
-                self.db.close()
-                return row[0]
-        self.db.close()
-        return None
+            select_all_rows = f"SELECT * FROM {my_nick}_inf"
+            self.c.execute(select_all_rows)
+            rows = self.c.fetchall()
+            for row in rows:
+                day = row[1]
+                day = day.split('-')
+                if int(day[2]) > datetime.datetime.now().day + 2:
+                    self.db.close()
+                    return row[0]
+            self.db.close()
+            return None
 
 
-    def remove_nickname(self, my_nick, nick_remove):
-        self.c.execute(f"DELETE FROM {my_nick}_inf WHERE nick_you_sub = '{nick_remove}'")
-        self.db.commit()
-        self.db.close()
+        def remove_nickname(self, my_nick, nick_remove):
+            self.c.execute(f"DELETE FROM {my_nick}_inf WHERE nick_you_sub = '{nick_remove}'")
+            self.db.commit()
+            self.db.close()
+    except:
+        print("[!] Data base error")
 
 
 
