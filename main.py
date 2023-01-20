@@ -38,11 +38,12 @@ class Instagram():
 
             pickle.dump(self.browser.get_cookies(), open(f"{cfg.username}.ck", "wb"))
 
-    def subs_for_user_subs(self, nick_for_subs):
+    def subs_on_user_subs(self, nick_for_subs):
         self.browser.get(f'https://www.instagram.com/{nick_for_subs}/followers/')
         i = 1
         b = 1
         time.sleep(5)
+
         while True:
             sub = self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i))
             sub.click()
@@ -51,16 +52,19 @@ class Instagram():
                 self.browser.find_element(By.XPATH, pub_cfg.sub_cancel).click()
                 b -= 1
                 print('You now subscribe')
+
             except:
-                print(pub_cfg.sub_nick(i))
                 nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
                 db.bd_sync().write_users(cfg.username, nick_user)
+                db.bd_sync().add_nick_name_in_all(nick_user)
                 print(f'[+] You subscribe {b} to {nick_user}')
+
             i += 1
             b += 1
             if i == 50:
                 self.browser.refresh()
                 i = 1
+
             time.sleep(60)
 
 
@@ -93,8 +97,10 @@ class Instagram():
 
 
 
+
+
 nick = input('Enter nick: ')
-Instagram().subs_for_user_subs(nick)
+Instagram().subs_on_user_subs(nick)
 #Instagram().unsubs_check_and_time()
 #threading.Thread(target=Instagram().unsubs_check_and_time()).start()
 #threading.Thread(target=Instagram().subs_for_user_subs(nick))

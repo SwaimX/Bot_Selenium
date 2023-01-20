@@ -37,6 +37,29 @@ class bd_sync():
             self.c.execute(f"DELETE FROM {my_nick}_inf WHERE nick_you_sub = '{nick_remove}'")
             self.db.commit()
             self.db.close()
+
+        def add_nick_name_in_all(self, nick):
+            while True:
+                try:
+                    select_all_rows = "SELECT * FROM subs_inf"
+                    self.c.execute(select_all_rows)
+                    rows = self.c.fetchall()
+                    for row in rows:
+                        nick_in_data = row[0]
+                        if nick_in_data == nick:
+                            self.db.close()
+                            return
+                    self.c.execute(f"INSERT INTO subs_inf VALUES ('{nick}', false);")
+                    self.db.commit()
+                    self.db.close()
+                    return
+
+                except:
+                    self.c.execute('CREATE TABLE subs_inf (nick text, hose BOOLEAN);')
+                    self.db.commit()
+                    continue
+
+
     except:
         print("[!] Data base error")
 
