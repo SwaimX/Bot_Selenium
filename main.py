@@ -1,6 +1,6 @@
 import time, threading
 import selenium.common.exceptions
-import cfg, db
+import cfg, db, pub_cfg
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pickle
@@ -13,7 +13,7 @@ class Instagram():
         self.browser.get('https://www.instagram.com/')
         time.sleep(5)
         try:
-            self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/button[1]').click()
+            self.browser.find_element(By.XPATH, pub_cfg.cookies_accept).click()
             print("[+] Cookies accept")
         except:
             print("[+]Cokies dont need")
@@ -29,11 +29,11 @@ class Instagram():
 
         except:
             time.sleep(5)
-            login = self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div[1]/div[1]/div/label/input')
+            login = self.browser.find_element(By.XPATH, pub_cfg.auth_login)
             login.send_keys(cfg.username)
-            password = self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div[1]/div[2]/div/label/input')
+            password = self.browser.find_element(By.XPATH, pub_cfg.auth_password)
             password.send_keys(cfg.password)
-            self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/article/div[2]/div[1]/div[2]/form/div/div[3]/button').click()
+            self.browser.find_element(By.XPATH, pub_cfg.auth_btn).click()
             time.sleep(5)
 
             pickle.dump(self.browser.get_cookies(), open(f"{cfg.username}.ck", "wb"))
@@ -44,15 +44,16 @@ class Instagram():
         b = 1
         time.sleep(5)
         while True:
-            sub = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[3]/button')
+            sub = self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i))
             sub.click()
             time.sleep(2)
             try:
-                self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]').click()
+                self.browser.find_element(By.XPATH, pub_cfg.sub_cancel).click()
                 b -= 1
                 print('You now subscribe')
-            except selenium.common.exceptions.NoSuchElementException:
-                nick_user = self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[2]/div/div/div/div/a/span/div').text
+            except:
+                print(pub_cfg.sub_nick(i))
+                nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
                 db.bd_sync().write_users(cfg.username, nick_user)
                 print(f'[+] You subscribe {b} to {nick_user}')
             i += 1
@@ -92,8 +93,10 @@ class Instagram():
 
 
 
-#nick = input('Enter nick: ')
-threading.Thread(target=Instagram().unsubs_check_and_time()).start()
+nick = input('Enter nick: ')
+Instagram().subs_for_user_subs(nick)
+#Instagram().unsubs_check_and_time()
+#threading.Thread(target=Instagram().unsubs_check_and_time()).start()
 #threading.Thread(target=Instagram().subs_for_user_subs(nick))
 
 
