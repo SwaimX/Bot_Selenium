@@ -134,8 +134,8 @@ if __name__ == "__main__":
         to_do = input("1.Follow all followers of the account\n"
                       "2.Unsubscribe from everyone\n"
                       "3.Unsubscribe if more than two days have passed\n"
-                      "4.Unsubscribe if the account does not subscribe in response\n"
-                      "5.Optimal. This function immediately subscribes, waits two days and unsubscribes and it's all at the same time\n"
+                      "4.Checking accounts for mutual subscription\n"
+                      "5.Optimal\n"
                       "What to do: ")
         if to_do == "1":
             nick = input("Enter a nickname to subscribe to his followers: ")
@@ -154,6 +154,7 @@ if __name__ == "__main__":
             nick = input("Enter a nickname to subscribe to his followers: ")
             Thread(target=Instagram().unsubs_check_and_time()).start()
             Thread(target=Instagram().subs_on_user_subs, args=nick)
+            Thread(target=Instagram().check_no_hose())
 
         elif to_do == "exit":
             break
