@@ -1,5 +1,5 @@
-import time, threading
-import selenium.common.exceptions
+import time
+from threading import Thread
 import cfg, db, pub_cfg
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -8,7 +8,7 @@ import pickle
 class Instagram():
     def __init__(self):
         options = webdriver.FirefoxOptions()
-        #options.headless = True
+        options.headless = True
         self.browser = webdriver.Firefox(options=options)
         self.browser.get('https://www.instagram.com/')
         time.sleep(5)
@@ -77,6 +77,7 @@ class Instagram():
             time.sleep(1)
             self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[1]').click()
             i += 1
+            print("[+]Unsub succesfull")
             time.sleep(60)
 
     def unsubs_check_and_time(self):
@@ -128,10 +129,42 @@ class Instagram():
 
 
 
-Instagram().check_no_hose()
+if __name__ == "__main__":
+    while True:
+        to_do = input("1.Follow all followers of the account\n"
+                      "2.Unsubscribe from everyone\n"
+                      "3.Unsubscribe if more than two days have passed\n"
+                      "4.Unsubscribe if the account does not subscribe in response\n"
+                      "5.Optimal. This function immediately subscribes, waits two days and unsubscribes and it's all at the same time\n"
+                      "What to do: ")
+        if to_do == "1":
+            nick = input("Enter a nickname to subscribe to his followers: ")
+            Instagram().subs_on_user_subs(nick)
 
-# nick = input('Enter nick: ')
-# # Instagram().subs_on_user_subs(nick)
-# #Instagram().unsubs_check_and_time()
-# #threading.Thread(target=Instagram().unsubs_check_and_time()).start()
-# threading.Thread(target=Instagram().subs_on_user_subs(nick))
+        elif to_do == "2":
+            Instagram().unsubs_all()
+
+        elif to_do == "3":
+            Instagram().unsubs_check_and_time()
+
+        elif to_do == "4":
+            Instagram().check_no_hose()
+
+        elif to_do == "5":
+            nick = input("Enter a nickname to subscribe to his followers: ")
+            Thread(target=Instagram().unsubs_check_and_time()).start()
+            Thread(target=Instagram().subs_on_user_subs, args=nick)
+
+        elif to_do == "exit":
+            break
+
+        else:
+            print("[!]The variant is not True\n"
+                  "exit if you want quit\n"
+                  "Enter a number from one to five\n")
+            continue
+
+
+
+
+
