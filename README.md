@@ -16,7 +16,7 @@ Opportunities:
 
 ##### Follow all followers of the account
 
-This function asks you for a nickname for all subscribers to which it subscribes, which also enters the account's nickname into the SquelLight database, as well as the time when it was subscribed to it, which is also entered into the general database of the account. It also has a delay of 60 seconds, this is done so that Instagram does not block your actions
+This function asks you for a nickname for all subscribers to which it subscribes, which also enters the account's nickname into the SqlLite database, as well as the time when it was subscribed to it, which is also entered into the general database of the account. It also has a delay of 60 seconds, this is done so that Instagram does not block your actions
 
 ##### Unsubscribe from everyone
 
