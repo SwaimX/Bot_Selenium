@@ -7,9 +7,17 @@ import pickle
 
 class Instagram():
     def __init__(self):
-        options = webdriver.FirefoxOptions()
-        options.headless = True
-        self.browser = webdriver.Firefox(options=options)
+        try:
+            options = webdriver.ChromeOptions()
+            options.headless = cfg.visible
+            self.browser = webdriver.Chrome(options=options)
+
+        except:
+            options = webdriver.FirefoxOptions()
+            options.headless = cfg.visible
+            self.browser = webdriver.Firefox(options=options)
+
+
         self.browser.get('https://www.instagram.com/')
         time.sleep(5)
         try:
