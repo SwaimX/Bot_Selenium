@@ -37,14 +37,21 @@ class Instagram():
 
         except:
             time.sleep(5)
-            login = self.browser.find_element(By.XPATH, pub_cfg.auth_login)
-            login.send_keys(cfg.username)
-            password = self.browser.find_element(By.XPATH, pub_cfg.auth_password)
-            password.send_keys(cfg.password)
-            self.browser.find_element(By.XPATH, pub_cfg.auth_btn).click()
-            time.sleep(5)
+
+            try:
+                login = self.browser.find_element(By.XPATH, pub_cfg.auth_login)
+                login.send_keys(cfg.username)
+                password = self.browser.find_element(By.XPATH, pub_cfg.auth_password)
+                password.send_keys(cfg.password)
+                self.browser.find_element(By.XPATH, pub_cfg.auth_btn).click()
+                time.sleep(5)
+            except:
+                print("[!] Incorrect Xpath in authorization")
+                return
 
             pickle.dump(self.browser.get_cookies(), open(f"{cfg.username}.ck", "wb"))
+
+        print("[+] Login is successful")
 
     def subs_on_user_subs(self, nick_for_subs):
         self.browser.get(f'https://www.instagram.com/{nick_for_subs}/followers/')
@@ -53,8 +60,13 @@ class Instagram():
         time.sleep(5)
 
         while True:
-            sub = self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i))
-            sub.click()
+            try:
+                sub = self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i))
+                sub.click()
+            except:
+                print("[!] Incorrect Xpath button subscribe")
+                return
+
             time.sleep(2)
             try:
                 self.browser.find_element(By.XPATH, pub_cfg.sub_cancel).click()
@@ -62,7 +74,11 @@ class Instagram():
                 print('You now subscribe')
 
             except:
-                nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
+                try:
+                    nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
+                except:
+                    print("[!] Incorrect Xpath text of nickname")
+                    return
                 db.bd_sync().write_users(cfg.username, nick_user)
                 db.bd_sync().add_nick_name_in_all(nick_user)
                 print(f'[+] You subscribe {b} to {nick_user}')
@@ -81,9 +97,22 @@ class Instagram():
         time.sleep(10)
         i = 1
         while True:
-            self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div/div[{i}]/div[3]/button').click()
+            try:
+                self.browser.find_element(By.XPATH, pub_cfg.following(i)).click()
+            except :
+                print("[!] Incorrect xpath button following")
+                self.browser.quit()
+                return
+
             time.sleep(1)
-            self.browser.find_element(By.XPATH, f'/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[1]').click()
+
+            try:
+                self.browser.find_element(By.XPATH, pub_cfg.unsub).click()
+            except:
+                print("[!] Incorrect xpath button unsubscribe")
+                self.browser.quit()
+                return
+
             i += 1
             print("[+]Unsub succesfull")
             time.sleep(60)
@@ -96,9 +125,21 @@ class Instagram():
                 print(uns)
                 self.browser.get(f'https://www.instagram.com/{uns}/')
                 time.sleep(5)
-                self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/header/section/div[1]/div[1]/div/div[1]/button').click()
-                time.sleep(5)
-                self.browser.find_element(By.XPATH, '/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div/div[7]').click()
+                try:
+                    self.browser.find_element(By.XPATH, pub_cfg.followingser).click()
+                    time.sleep(5)
+                except:
+                    print("[!] Incorrect xpath button following")
+                    self.browser.quit()
+                    return
+
+                try:
+                    self.browser.find_element(By.XPATH, pub_cfg.unsubs).click()
+                except:
+                    print("[!] Incorrect xpath button unsubscribe")
+                    self.browser.quit()
+                    return
+
                 db.bd_sync().remove_nickname(cfg.username, uns)
                 time.sleep(60)
             else:

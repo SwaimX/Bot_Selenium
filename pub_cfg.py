@@ -39,6 +39,24 @@ hose_for_scroll = lambda i: f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1
 # This is to click cancel pressing the above button
 hose_for_cancel = '/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]'
 
-#
+## Unsubs everyone
+
+# This is a xpath button following in your subscriptions
+following = lambda i: f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/div[1]/div/div[{i}]/div[3]/button'
+
+# This is a xpath button unsubscribe
+unsub = '/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[1]'
+
+## Unsub if time more two deys
+
+# This xpath of button following on the page of the user you are subscribed to
+followingser = "/html/body/div[2]/div/div/div/div[1]/div/div/div/div[1]/section/main/div/header/section/div[1]/div[1]/div/div[1]/button"
+
+# This xpath button unsubscribe
+
+unsubs = '/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div/div[7]'
+
+
+
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div[1]/div[2]/div[1]/div/div/span/a/span/div
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/div/span/a/span/div
