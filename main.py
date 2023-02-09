@@ -100,7 +100,7 @@ class Instagram():
                     self.browser.refresh()
                     i = 1
 
-                time.sleep(int(cfg.sign_interval))
+                time.sleep(cfg.sign_interval)
 
             elif datetime.datetime.now().hour == 00:
                 number_of_day = cfg.number_of_subscriptions_per_day
