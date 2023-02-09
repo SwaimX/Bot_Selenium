@@ -13,3 +13,9 @@ accaunts = {
 }
 
 visible = False
+
+number_of_subscriptions_per_day = 90
+
+sign_interval = 60
+
+unsub_interval = 60
