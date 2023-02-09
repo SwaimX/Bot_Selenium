@@ -11,3 +11,5 @@ accaunts = {
     "login10":"your login","password10":"your password",
 
 }
+
+visible = False
