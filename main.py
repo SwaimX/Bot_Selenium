@@ -1,12 +1,12 @@
-import time
-from threading import Thread
+import time, os
+import threading
 import cfg, db, pub_cfg
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pickle
 
 class Instagram():
-    def __init__(self):
+    def __init__(self, number):
         try:
             options = webdriver.ChromeOptions()
             options.headless = cfg.visible
@@ -27,33 +27,36 @@ class Instagram():
             print("[+]Cokies dont need")
 
         # Auth
-        try:
-            for cookie in pickle.load(open(f"{cfg.username}.ck", "rb")):
+        if os.path.exists(f"{cfg.accaunts[f'login{number}']}.ck"):
+            print(cfg.accaunts[f'login{number}'])
+            for cookie in pickle.load(open(f"{cfg.accaunts[f'login{number}']}.ck", "rb")):
                 self.browser.add_cookie(cookie)
 
             time.sleep(5)
             self.browser.refresh()
             time.sleep(5)
 
-        except:
+        else:
             time.sleep(5)
 
             try:
                 login = self.browser.find_element(By.XPATH, pub_cfg.auth_login)
-                login.send_keys(cfg.username)
+                login.send_keys(cfg.accaunts[f'login{number}'])
                 password = self.browser.find_element(By.XPATH, pub_cfg.auth_password)
-                password.send_keys(cfg.password)
+                password.send_keys(cfg.accaunts[f'password{number}'])
                 self.browser.find_element(By.XPATH, pub_cfg.auth_btn).click()
                 time.sleep(5)
             except:
                 print("[!] Incorrect Xpath in authorization")
+                self.browser.quit()
                 return
 
-            pickle.dump(self.browser.get_cookies(), open(f"{cfg.username}.ck", "wb"))
+            pickle.dump(self.browser.get_cookies(), open(f"{cfg.accaunts[f'login{number}']}.ck", "wb"))
+            time.sleep(5)
 
         print("[+] Login is successful")
 
-    def subs_on_user_subs(self, nick_for_subs):
+    def subs_on_user_subs(self, nick_for_subs, number):
         self.browser.get(f'https://www.instagram.com/{nick_for_subs}/followers/')
         i = 1
         b = 1
@@ -61,10 +64,10 @@ class Instagram():
 
         while True:
             try:
-                sub = self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i))
-                sub.click()
+                self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i)).click()
             except:
                 print("[!] Incorrect Xpath button subscribe")
+                self.browser.quit()
                 return
 
             time.sleep(2)
@@ -77,9 +80,12 @@ class Instagram():
                 try:
                     nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
                 except:
+
                     print("[!] Incorrect Xpath text of nickname")
+                    #time.sleep()
+                    self.browser.quit()
                     return
-                db.bd_sync().write_users(cfg.username, nick_user)
+                db.bd_sync().write_users(cfg.accaunts[f'login{number}'], nick_user)
                 db.bd_sync().add_nick_name_in_all(nick_user)
                 print(f'[+] You subscribe {b} to {nick_user}')
 
@@ -92,8 +98,8 @@ class Instagram():
             time.sleep(60)
 
 
-    def unsubs_all(self):
-        self.browser.get(f'https://www.instagram.com/{cfg.username}/following/')
+    def unsubs_all(self, number):
+        self.browser.get(f'https://www.instagram.com/{cfg.accaunts[f"login{number}"]}/following/')
         time.sleep(10)
         i = 1
         while True:
@@ -117,9 +123,9 @@ class Instagram():
             print("[+]Unsub succesfull")
             time.sleep(60)
 
-    def unsubs_check_and_time(self):
+    def unsubs_check_and_time(self, number):
         while True:
-            uns = db.bd_sync().check_data(cfg.username)
+            uns = db.bd_sync().check_data(cfg.accaunts[f'login{number}'])
             time.sleep(2)
             if uns != None:
                 print(uns)
@@ -140,13 +146,13 @@ class Instagram():
                     self.browser.quit()
                     return
 
-                db.bd_sync().remove_nickname(cfg.username, uns)
+                db.bd_sync().remove_nickname(cfg.accaunts[f'login{number}'], uns)
                 time.sleep(60)
             else:
                 time.sleep(60*60)
 
-    def check_no_hose(self):
-        self.browser.get(f'https://www.instagram.com/{cfg.username}/followers/')
+    def check_no_hose(self, number):
+        self.browser.get(f'https://www.instagram.com/{cfg.accaunts[f"login{number}"]}/followers/')
         time.sleep(15)
         gor = 0
         i = 1
@@ -175,10 +181,7 @@ class Instagram():
 
 
 
-
-
-
-if __name__ == "__main__":
+def runnning(i):
     while True:
         to_do = input("1.Follow all followers of the account\n"
                       "2.Unsubscribe from everyone\n"
@@ -188,22 +191,27 @@ if __name__ == "__main__":
                       "What to do: ")
         if to_do == "1":
             nick = input("Enter a nickname to subscribe to his followers: ")
-            Instagram().subs_on_user_subs(nick)
+            thread1 = threading.Thread(target=Instagram(i).subs_on_user_subs, args=(nick, i))
+            thread2 = threading.Thread(target=runnning, args=(i+1,))
+            thread1.start()
+            thread2.start()
+            thread2.join()
 
         elif to_do == "2":
-            Instagram().unsubs_all()
+            Instagram(i).unsubs_all(i)
 
         elif to_do == "3":
-            Instagram().unsubs_check_and_time()
+            Instagram(i).unsubs_check_and_time(i)
 
         elif to_do == "4":
-            Instagram().check_no_hose()
+            Instagram(i).check_no_hose(i)
 
         elif to_do == "5":
             nick = input("Enter a nickname to subscribe to his followers: ")
-            Thread(target=Instagram().unsubs_check_and_time()).start()
-            Thread(target=Instagram().subs_on_user_subs, args=nick)
-            Thread(target=Instagram().check_no_hose())
+            threading.Thread(target=Instagram(i).subs_on_user_subs, args=(nick, i)).start()
+            threading.Thread(target=Instagram(i).unsubs_check_and_time, args=(i,)).start()
+            thread2 = threading.Thread(target=runnning, args=(i + 1,))
+            thread2.start()
 
         elif to_do == "exit":
             break
@@ -213,6 +221,10 @@ if __name__ == "__main__":
                   "exit if you want quit\n"
                   "Enter a number from one to five\n")
             continue
+
+
+if __name__ == "__main__":
+    runnning(1)
 
 
 

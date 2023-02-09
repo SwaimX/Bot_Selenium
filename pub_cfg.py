@@ -23,7 +23,12 @@ sub_subscribeb = lambda i: f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]
 sub_cancel = '/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[3]/button[2]'
 
 #This is the text of the niku account
-sub_nick = lambda i: f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[2]/div/div/div/span/a/span/div'
+def sub_nick(i):
+    if i == 1:
+        return f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div/div/div/span/a/span/div'
+    else:
+        return f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[2]/div/div/div/div/span/a/span/div'
+
 
 def hose_no(i):
     if i == 1:
@@ -60,3 +65,9 @@ unsubs = '/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div
 
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div[1]/div[2]/div[1]/div/div/span/a/span/div
 #/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/div/span/a/span/div
+
+# /html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div/div/div/span/a/span/div
+# /html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div[2]/div[1]/div/div/div/div/a/span/div
+
+# /html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[2]/div[2]/div/div/div/div/span/a/span/div
+# /html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[3]/div[2]/div/div/div/div/span/a/span/div
