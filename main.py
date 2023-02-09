@@ -1,3 +1,4 @@
+import datetime
 import time, os
 import threading
 import cfg, db, pub_cfg
@@ -62,41 +63,50 @@ class Instagram():
         b = 1
         time.sleep(5)
 
+        number_of_day = cfg.number_of_subscriptions_per_day
+
         while True:
-            try:
-                self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i)).click()
-            except:
-                print("[!] Incorrect Xpath button subscribe")
-                self.browser.quit()
-                return
-
-            time.sleep(2)
-            try:
-                self.browser.find_element(By.XPATH, pub_cfg.sub_cancel).click()
-                b -= 1
-                print('You now subscribe')
-
-            except:
+            if number_of_day != 0:
                 try:
-                    nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
+                    self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i)).click()
                 except:
-
-                    print("[!] Incorrect Xpath text of nickname")
-                    #time.sleep()
+                    print("[!] Incorrect Xpath button subscribe")
                     self.browser.quit()
                     return
-                db.bd_sync().write_users(cfg.accaunts[f'login{number}'], nick_user)
-                db.bd_sync().add_nick_name_in_all(nick_user)
-                print(f'[+] You subscribe {b} to {nick_user}')
 
-            i += 1
-            b += 1
-            if i == 50:
-                self.browser.refresh()
-                i = 1
+                time.sleep(2)
+                try:
+                    self.browser.find_element(By.XPATH, pub_cfg.sub_cancel).click()
+                    b -= 1
+                    print('You now subscribe')
 
-            time.sleep(60)
+                except:
 
+                    try:
+                        nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
+                    except:
+
+                        print("[!] Incorrect Xpath text of nickname")
+                        #time.sleep()
+                        self.browser.quit()
+                        return
+                    db.bd_sync().write_users(cfg.accaunts[f'login{number}'], nick_user)
+                    db.bd_sync().add_nick_name_in_all(nick_user)
+                    print(f'[+] You subscribe {b} to {nick_user}')
+
+                i += 1
+                b += 1
+                if i == 50:
+                    self.browser.refresh()
+                    i = 1
+
+                time.sleep(cfg.sign_interval)
+
+            elif datetime.datetime.now().hour == 00:
+                number_of_day = cfg.number_of_subscriptions_per_day
+
+            else:
+                time.sleep(60*60)
 
     def unsubs_all(self, number):
         self.browser.get(f'https://www.instagram.com/{cfg.accaunts[f"login{number}"]}/following/')
@@ -121,7 +131,7 @@ class Instagram():
 
             i += 1
             print("[+]Unsub succesfull")
-            time.sleep(60)
+            time.sleep(cfg.unsub_interval)
 
     def unsubs_check_and_time(self, number):
         while True:
