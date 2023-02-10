@@ -18,4 +18,6 @@ number_of_subscriptions_per_day = 90
 
 sign_interval = 60
 
+debuging_time = 30000
+
 unsub_interval = 60
