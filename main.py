@@ -68,9 +68,11 @@ class Instagram():
         while True:
             if number_of_day != 0:
                 try:
-                    self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i)).click()
+                    self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb()).click()
+
                 except:
                     print("[!] Incorrect Xpath button subscribe")
+                    time.sleep(cfg.debuging_time)
                     self.browser.quit()
                     return
 
@@ -85,7 +87,7 @@ class Instagram():
                     try:
                         nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
                     except:
-
+                        time.sleep(cfg.debuging_time)
                         print("[!] Incorrect Xpath text of nickname")
                         #time.sleep()
                         self.browser.quit()
@@ -116,6 +118,7 @@ class Instagram():
             try:
                 self.browser.find_element(By.XPATH, pub_cfg.following(i)).click()
             except :
+                time.sleep(cfg.debuging_time)
                 print("[!] Incorrect xpath button following")
                 self.browser.quit()
                 return
@@ -125,6 +128,7 @@ class Instagram():
             try:
                 self.browser.find_element(By.XPATH, pub_cfg.unsub).click()
             except:
+                time.sleep(cfg.debuging_time)
                 print("[!] Incorrect xpath button unsubscribe")
                 self.browser.quit()
                 return
@@ -145,6 +149,7 @@ class Instagram():
                     self.browser.find_element(By.XPATH, pub_cfg.followingser).click()
                     time.sleep(5)
                 except:
+                    time.sleep(cfg.debuging_time)
                     print("[!] Incorrect xpath button following")
                     self.browser.quit()
                     return
@@ -152,6 +157,7 @@ class Instagram():
                 try:
                     self.browser.find_element(By.XPATH, pub_cfg.unsubs).click()
                 except:
+                    time.sleep(cfg.debuging_time)
                     print("[!] Incorrect xpath button unsubscribe")
                     self.browser.quit()
                     return
