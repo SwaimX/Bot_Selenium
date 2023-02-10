@@ -68,7 +68,7 @@ class Instagram():
         while True:
             if number_of_day != 0:
                 try:
-                    self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb()).click()
+                    self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i)).click()
 
                 except:
                     print("[!] Incorrect Xpath button subscribe")
