@@ -6,6 +6,24 @@ class bd_sync():
             self.db = sqlite3.connect('swaim.db')
             self.c = self.db.cursor()
 
+
+        def check_user_in(self, my_nick, nick_of_user):
+
+            try:
+                select_all_rows = f"SELECT * FROM {my_nick}_inf"
+                self.c.execute(select_all_rows)
+                rows = self.c.fetchall()
+                for row in rows:
+                    user = row[0]
+                    if user == nick_of_user:
+                        self.db.close()
+                        return "The user here"
+                self.db.close()
+                return None
+
+            except sqlite3.OperationalError:
+                self.c.execute(f'''CREATE TABLE {my_nick}_inf (nick_you_sub text, data text);''')
+
         def write_users(self, my_nick, nick_subs):
 
             try:

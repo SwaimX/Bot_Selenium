@@ -1,5 +1,5 @@
 import datetime
-import time, os
+import time, os, json
 import threading
 import cfg, db, pub_cfg
 from selenium import webdriver
@@ -57,52 +57,54 @@ class Instagram():
 
         print("[+] Login is successful")
 
-    def subs_on_user_subs(self, nick_for_subs, number):
-        self.browser.get(f'https://www.instagram.com/{nick_for_subs}/followers/')
+    def one_test(self, number):
+
         i = 1
-        b = 1
+
+        while True:
+            here = db.bd_sync().check_user_in(cfg.accaunts[f'login{number}'], "batyana")
+            if here == "The user here":
+                i += 1
+                continue
+            else:
+                break
+
+    def follow_on_followers(self, nick_for_subs, number):
         time.sleep(5)
 
         number_of_day = cfg.number_of_subscriptions_per_day
 
+        self.browser.get(f'https://www.instagram.com/{nick_for_subs}/followers/')
+        time.sleep(5)
         while True:
             if number_of_day != 0:
-                try:
-                    self.browser.find_element(By.XPATH, pub_cfg.sub_subscribeb(i)).click()
+                follow_buttons = self.browser.find_elements(By.XPATH, "//*[@class='_acan _acap _acas _aj1-']")
+                nick_subers = self.browser.find_elements(By.XPATH, "//*[@class=' _ab8y  _ab94 _ab97 _ab9f _ab9k _ab9p _abcm']")
 
-                except:
-                    print("[!] Incorrect Xpath button subscribe")
-                    time.sleep(cfg.debuging_time)
-                    self.browser.quit()
-                    return
+                i = 0
 
-                time.sleep(2)
-                try:
-                    self.browser.find_element(By.XPATH, pub_cfg.sub_cancel).click()
-                    b -= 1
-                    print('You now subscribe')
-
-                except:
-
+                for button in follow_buttons:
                     try:
-                        nick_user = self.browser.find_element(By.XPATH, pub_cfg.sub_nick(i)).text
+                        nick_sub = nick_subers[i].text
+                        button.click()
+                        while True:
+                            here = db.bd_sync().check_user_in(cfg.accaunts[f'login{number}'], nick_sub)
+                            if here == "The user here":
+                                i += 1
+                                continue
+                            else:
+                                db.bd_sync().write_users(cfg.accaunts[f'login{number}'], nick_sub)
+                                db.bd_sync().add_nick_name_in_all(nick_sub)
+                                print(f"[+]You are subscribed to user {nick_sub} number:{i}")
+                                break
+                        i += 1
+                        time.sleep(cfg.sign_interval)
                     except:
-                        time.sleep(cfg.debuging_time)
-                        print("[!] Incorrect Xpath text of nickname")
-                        #time.sleep()
-                        self.browser.quit()
-                        return
-                    db.bd_sync().write_users(cfg.accaunts[f'login{number}'], nick_user)
-                    db.bd_sync().add_nick_name_in_all(nick_user)
-                    print(f'[+] You subscribe {b} to {nick_user}')
+                        print(f"{i} is not work")
 
-                i += 1
-                b += 1
-                if i == 50:
-                    self.browser.refresh()
-                    i = 1
-
-                time.sleep(cfg.sign_interval)
+                number_of_day -= 1
+                self.browser.refresh()
+                time.sleep(5)
 
             elif datetime.datetime.now().hour == 00:
                 number_of_day = cfg.number_of_subscriptions_per_day
@@ -207,7 +209,7 @@ def runnning(i):
                       "What to do: ")
         if to_do == "1":
             nick = input("Enter a nickname to subscribe to his followers: ")
-            thread1 = threading.Thread(target=Instagram(i).subs_on_user_subs, args=(nick, i))
+            thread1 = threading.Thread(target=Instagram(i).follow_on_followers, args=(nick, i))
             thread2 = threading.Thread(target=runnning, args=(i+1,))
             thread1.start()
             thread2.start()
@@ -229,6 +231,9 @@ def runnning(i):
             thread2 = threading.Thread(target=runnning, args=(i + 1,))
             thread2.start()
 
+        elif to_do == "6":
+            nick = input("Enter a nickname to subscribe to his followers: ")
+
         elif to_do == "exit":
             break
 
@@ -240,7 +245,9 @@ def runnning(i):
 
 
 if __name__ == "__main__":
-    runnning(1)
+    nick = input("Enter a nickname to subscribe to his followers: ")
+    Instagram(1).follow_on_followers(nick, 1)
+    # runnning(1)
 
 
 

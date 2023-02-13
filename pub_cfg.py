@@ -24,10 +24,10 @@ sub_cancel = '/html/body/div[2]/div/div/div/div[2]/div/div/div[2]/div/div/div[1]
 
 #This is the text of the niku account
 def sub_nick(i):
-    if i == 1:
+    if i == 1000000:
         return f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[1]/div[2]/div/div/div/div/span/a/span/div'
     else:
-        return f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[2]/div/div[{i}]/div[2]/div/div/div/div/span/a/span/div'
+        return f'/html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/div/div[2]/div[1]/div/div[{i}]/div[2]/div[1]/div/div/div/div/a/span/div'
 
 
 def hose_no(i):
