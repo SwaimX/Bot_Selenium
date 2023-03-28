@@ -2,6 +2,13 @@
 
 ---
 
+Advantages:
+* The bot works without Xpath due to this I do not need a proxy
+* The bot simultaneously works with many accounts
+
+
+---
+
 Opportunities:
 * Follow all followers of the account
 * Unsubscribe from everyone
